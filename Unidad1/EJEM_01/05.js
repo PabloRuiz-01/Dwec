@@ -17,6 +17,5 @@ producto.disponible = true
 producto.imagen = 'imagen.jpg'
 
 // Eliminar propiedad
-delete producto.precio
 
 console.log(producto)
