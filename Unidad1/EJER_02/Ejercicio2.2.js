@@ -9,7 +9,7 @@ function calcularAreaRectangulo(base,altura) {
 
 const calcularAreaTriangulo=function(base,altura) {
     
-    return base*altura
+    return (base*altura)/2
 }
 
 //Convierte la función anterior en una Arrow Function
