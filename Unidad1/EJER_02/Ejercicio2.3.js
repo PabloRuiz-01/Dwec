@@ -15,7 +15,7 @@ function dinero(saldo,retirar) {
     }
 }
 
-console.log(dinero(1500,500))
+dinero(1500,500)
 
 //Extra: Añade una variable booleana tieneTarjetaCredito. Modifica la lógica para que, si el saldo no es suficiente 
 // PERO tieneTarjetaCredito es true, muestre “Saldo insuficiente, pagando con tarjeta de crédito”.
@@ -36,5 +36,5 @@ function dinero2(saldo,retirar,tieneTarjetaCredito) {
     }
 }
 
-console.log(dinero2(500,1500,true))
+dinero2(500,1500,true)
 
