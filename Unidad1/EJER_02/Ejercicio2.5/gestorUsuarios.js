@@ -30,10 +30,20 @@ export function esMayorDeEdad(usuario) {
 //Añade y exporta una función obtenerMayoresDeEdad que reciba un array de usuarios y, utilizando el método .filter() y la función 
 // esMayorDeEdad, devuelva un nuevo array solo con los usuarios que cumplen la condición.
 
-export function obtenerMayoresDeEdad(usuario) {
+export function obtenerMayoresDeEdad(usuarios) {
     
-    return usuarios.filter(usuario => esMayorDeEdad)
+    return usuarios.filter(usuario => esMayorDeEdad(usuario))
 }
 
 //Añade y exporta una función calcularPromedioEdad que reciba un array de usuarios y calcule su edad 
 //promedio. Puedes usar el método .reduce() para esto.
+
+export function calcularPromedioEdad(usuarios) {
+    const sumaEdades = usuarios.reduce((total, usuario) => {
+        return total + usuario.edad
+    }, 0)
+
+    return sumaEdades/usuarios.length
+}
+
+    
