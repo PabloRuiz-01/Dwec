@@ -121,17 +121,25 @@ export const productoMasCaro = (catalogo) => {
 // 3.3 Devuelve un objeto con las unidades en stock de cada categoría:
 //     { equipos: 7, accesorios: 29, discos: 14 }
 export const unidadesPorCategoria = (catalogo) => {
-  // Tu código aquí
+
+  return catalogo.reduce((acumulado, producto)=> {
+    acumulado[producto.categoria]=(acumulado[producto.categoria]||0)+producto.stock;
+
+    return acumulado
+  },{})
+
 };
 
 // 3.4 Devuelve true si hay AL MENOS un producto agotado.
 export const hayAgotados = (catalogo) => {
-  // Tu código aquí
+
+  return catalogo.some((producto)=>producto.stock===0)
+
 };
 
 // 3.5 Devuelve true si TODOS los precios son números mayores que 0.
 export const preciosValidos = (catalogo) => {
-  // Tu código aquí
+  return catalogo.every((producto)=> producto.precio>0)
 };
 
 // ================================================================
@@ -148,25 +156,56 @@ export const preciosValidos = (catalogo) => {
 //     }
 //     ¡Ojo! La cantidad debe ser un número, no un string.
 export const parsearPedido = (texto) => {
-  // Tu código aquí
+  const [cliente, textoLineas] = texto.split("|");
+
+  const lineas = textoLineas.split(";").map((linea) => {
+    const [nombre, cantidad] = linea.split(":");
+
+    return {
+      nombre,
+      cantidad: Number(cantidad),
+    };
+  });
+
+  return {
+    cliente,
+    lineas,
+  };
+
 };
 
 // 4.2 Devuelve true si TODOS los productos del pedido existen
 //     y tienen stock suficiente.
 export const puedeServirse = (catalogo, pedido) => {
-  // Tu código aquí
+  return pedido.lineas.every(linea=>{
+    const producto= buscarProducto(catalogo, linea.nombre);
+    return producto && producto.stock >=linea.cantidad;
+  })
 };
 
 // 4.3 Devuelve el importe total del pedido.
 export const totalPedido = (catalogo, pedido) => {
-  // Tu código aquí
+
+  return pedido.lineas.reduce((acumulador, linea)=>{
+    const producto= buscarProducto(catalogo, linea.nombre)
+    return acumulador +(producto ? producto.precio *linea.cantidad :0)
+  },0)
+
 };
+
 
 // 4.4 Devuelve un catálogo NUEVO en el que se ha restado del stock
 //     la cantidad pedida de cada producto. El original no cambia.
 //     Pista: { ...producto, stock: nuevoStock } crea una copia del objeto.
 export const servirPedido = (catalogo, pedido) => {
-  // Tu código aquí
+
+  return catalogo.map(producto=>{
+    const linea=pedido.lineas.find(l=>l.nombre.toLowerCase()=== producto.nombre)
+    if (linea) {
+      return {...producto,stock: producto.stock - linea.cantidad};
+    }
+    return {...producto}
+  })
 };
 
 // 4.5 Devuelve el ticket del pedido como un único texto:
