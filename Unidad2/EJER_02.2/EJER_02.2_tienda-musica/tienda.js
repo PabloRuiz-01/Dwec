@@ -200,7 +200,7 @@ export const totalPedido = (catalogo, pedido) => {
 export const servirPedido = (catalogo, pedido) => {
 
   return catalogo.map(producto=>{
-    const linea=pedido.lineas.find(l=>l.nombre.toLowerCase()=== producto.nombre)
+    const linea=pedido.lineas.find(l=>l.nombre.toLowerCase()=== producto.nombre.toLowerCase())
     if (linea) {
       return {...producto,stock: producto.stock - linea.cantidad};
     }
@@ -215,8 +215,21 @@ export const servirPedido = (catalogo, pedido) => {
 //     TOTAL: 260 €
 //     Pista: construye un array de líneas y únelas con '\n'.
 export const generarTicket = (catalogo, pedido) => {
-  // Tu código aquí
-};
+  const lineaTicket = [`Cliente: ${pedido.cliente}`];
+
+  for (const linea of pedido.lineas) {
+    const producto = buscarProducto(catalogo, linea.nombre);
+    const subTotal=producto.precio*linea.cantidad
+    lineaTicket.push(`${linea.cantidad} x ${producto.nombre} = ${subTotal} €`)
+  }
+
+  const total= totalPedido(catalogo,pedido)
+  lineaTicket.push(`TOTAL: ${total} €`)
+
+  return lineaTicket.join("\n")
+
+  };
+
 
 // ================================================================
 // PARTE 5 · COLA DE PEDIDOS Y CARRITO CON "DESHACER"
@@ -226,26 +239,37 @@ export const generarTicket = (catalogo, pedido) => {
 // 5.1 COLA (el primero que llega es el primero en salir):
 //     saca y devuelve el primer pedido de la cola.
 export const atenderSiguiente = (cola) => {
-  // Tu código aquí
+  return cola.shift();
 };
 
 // 5.2 Coloca el pedido al PRINCIPIO de la cola y devuelve
 //     la nueva longitud de la cola.
 export const agregarUrgente = (cola, pedido) => {
-  // Tu código aquí
+  return cola.unshift(pedido)
 };
 
 // 5.3 Añade el nombre al final del carrito y apunta la acción en el
 //     historial: { accion: 'agregar', nombre }
 export const agregarAlCarrito = (carrito, historial, nombre) => {
-  // Tu código aquí
+  carrito.push(nombre)
+  return historial.push({ accion: 'agregar', nombre })
 };
 
 // 5.4 Quita la PRIMERA aparición del nombre en el carrito y apunta en
 //     el historial: { accion: 'quitar', nombre, posicion }
 //     Devuelve true, o false (sin tocar nada) si no estaba.
 export const quitarDelCarrito = (carrito, historial, nombre) => {
-  // Tu código aquí
+  
+  const posicion=carrito.indexOf(nombre)
+
+  if(posicion===-1){
+    return false
+  }
+
+  carrito.splice(posicion,1)
+  historial.push({ accion: 'quitar', nombre, posicion })
+  return true
+
 };
 
 // 5.5 PILA (la última acción es la primera en deshacerse):
@@ -254,7 +278,22 @@ export const quitarDelCarrito = (carrito, historial, nombre) => {
 //     - si fue 'quitar', vuelve a insertarlo en su posición original.
 //     Devuelve true, o false si el historial estaba vacío.
 export const deshacer = (carrito, historial) => {
-  // Tu código aquí
+  
+  if (historial.length===0) {
+    return false
+  }
+
+  const accion=historial.pop()
+
+  if (accion.accion==='agregar') {
+    const posicion=carrito.lastIndexOf(accion.nombre)
+    if (posicion!==-1) {
+      carrito.splice(posicion,1)
+    }
+  }else if (accion.accion==='quitar') {
+    carrito.splice(accion.posicion, 0, accion.nombre)
+  }
+  return true
 };
 
 // ================================================================
@@ -266,18 +305,51 @@ export const deshacer = (carrito, historial) => {
 //     guarda en servidos; si no, en rechazados. Al terminar la cola queda vacía.
 //     Devuelve { catalogo, servidos, rechazados }
 export const procesarCola = (catalogo, cola) => {
-  // Tu código aquí
+  let catalogoActual=catalogo
+  const servidos=[]
+  const rechazados=[]
+
+  while (cola.length>0) {
+    const pedido=atenderSiguiente(cola)
+
+    if (puedeServirse(catalogo,pedido)) {
+      catalogoActual=servirPedido(catalogoActual,pedido)
+      servidos.push(pedido)
+    }else{
+      rechazados.push(pedido)
+    }
+  }
+
+  return{catalogo: catalogoActual,servidos,rechazados}
 };
 
 // 6.2 Recibe un array de pedidos y devuelve los nombres de los productos
 //     vendidos, SIN repetidos y en orden alfabético.
 export const productosVendidos = (pedidos) => {
-  // Tu código aquí
+
+  const nombresSet=new Set()
+
+  for (const pedido of pedidos) {
+    for (const linea of pedido.lineas) {
+      nombresSet.add(linea.nombre)
+    }
+  }
+
+  return Array.from(nombresSet).sort((a,b) =>
+    a.localeCompare(b,'es',{sensitivity: 'base'}))
+
 };
 
 // 6.3 Devuelve un array de textos con una barra por producto:
 //     'Altavoz: ■■■ (3)'
 //     Obligatorio: crea la barra con new Array(...).fill('■')
 export const graficoStock = (catalogo) => {
-  // Tu código aquí
+  
+  return catalogo.map(producto=>{
+    const barras= producto.stock > 0 ? new Array(producto.stock).fill('■').join(''):''
+
+    return `${producto.nombre}: ${barras} (${producto.stock})`
+  })
+
+
 };
