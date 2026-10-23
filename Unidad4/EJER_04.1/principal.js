@@ -167,3 +167,34 @@ botonlimpiar.addEventListener("click", function () {
 
 
 // ---------- Ejercicio 8 · Detener y cancelar ----------
+
+const tarjetaProducto= document.getElementById("tarjeta-producto");
+const botonComprar=document.getElementById("boton-comprar");
+const enlaceInfo=document.getElementById("enlace-info");
+let mensajeEstado=document.getElementById("mensaje-estado");
+
+
+
+function escribirEstado(mensaje) {
+    
+    if (mensajeEstado.textContent) {
+        mensajeEstado.textContent +='\n'+ mensaje
+    }else{
+        mensajeEstado.textContent=mensaje
+    }
+}
+
+tarjetaProducto.addEventListener("click",(evento)=>{ 
+    escribirEstado("Has pulsado la tarjeta")
+})
+
+botonComprar.addEventListener("click",(evento)=>{
+    evento.stopPropagation();
+    escribirEstado("Producto comprado")
+})
+
+enlaceInfo.addEventListener("click", (evento)=>{
+    evento.preventDefault();
+    evento.stopPropagation();
+    escribirEstado("Enlace bloqueado");
+})
