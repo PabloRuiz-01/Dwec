@@ -5,6 +5,6 @@ const tareas = [
     { id: 4, descripcion: "Responder correos urgentes", completada: false }
 ];
 
-const tareasRestantes=tareas.map((tarea)=>!tarea.id===2);
+const tareasRestantes=tareas.filter((tarea)=>tarea.id!==2);
 
 console.log(tareasRestantes);

@@ -5,8 +5,9 @@ const tareas = [
     { id: 4, descripcion: "Responder correos urgentes", completada: false }
 ];
 
-const pendientesUrgentes  = tareas
+const pendientesUrgentes = tareas
     .map((tarea) => tarea.completada === false ? { ...tarea, urgente: true } : tarea)
-    .filter((tarea) => tarea.completada === false);
+    .filter((tarea) => tarea.completada === false)
+    .map(tarea => tarea.descripcion);;
 
-console.log(pendientesUrgentes );
+console.log(pendientesUrgentes);
