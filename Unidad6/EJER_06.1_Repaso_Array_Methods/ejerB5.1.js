@@ -7,7 +7,9 @@ const tareas = [
 
 const pendientesUrgentes = tareas
     .map((tarea) => tarea.completada === false ? { ...tarea, urgente: true } : tarea)
-    .filter((tarea) => tarea.completada === false)
-    .map(tarea => tarea.descripcion);;
+    .filter((tarea) => tarea.completada === false);
+
+const descripcionesUrgentes = pendientesUrgentes.map(tarea => tarea.descripcion);
 
 console.log(pendientesUrgentes);
+console.log(descripcionesUrgentes);
